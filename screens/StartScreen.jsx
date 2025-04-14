@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, TextInput, Alert } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Alert, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { useState } from 'react';
 import NiceButton from '../components/NiceButton';
 import Card from '../components/Card';
@@ -28,28 +28,36 @@ function StartScreen(props) {
     }
 
     return (
-        <Card>
-            <Text>Let's play a game ! I will guess your number</Text>
-            <TextInput placeholder="Enter number" onChangeText={handleNumberChange} value={number} keyboardType="numeric" maxLength={2} />
-            <View style={styles.buttonContainer}>
-                <View style={styles.button}>
-                    <NiceButton title="Reset" onPress={handleReset} backgroundColor="black" />
-                </View>
-                <View style={styles.button}>
-                    <NiceButton title="Let's go" onPress={() => handleValidate(number)} />
-                </View>
-            </View>
-        </Card>
+        <ScrollView contentContainerStyle={styles.rootContainer}>
+            <KeyboardAvoidingView behavior="position">
+                <Card>
+                    <Text>Let's play a game ! I will guess your number bitch</Text>
+                    <TextInput placeholder="Enter number" onChangeText={handleNumberChange} value={number} keyboardType="numeric" maxLength={2} />
+                    <View style={styles.buttonContainer}>
+                        <View style={styles.button}>
+                            <NiceButton title="Reset" onPress={handleReset} backgroundColor="black" />
+                        </View>
+                        <View style={styles.button}>
+                            <NiceButton title="Let's go" onPress={() => handleValidate(number)} />
+                        </View>
+                    </View>
+                </Card>
+            </KeyboardAvoidingView>
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
+    rootContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     buttonContainer: {
         flexDirection: 'row',
         gap: 20,
         width: '100%',
     },
-
     button: {
         flex: 1,
     }
