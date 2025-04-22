@@ -1,14 +1,13 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { useContext } from 'react';
-import { FavoritesContext } from '../store/context/favorites-context';
 import MealsList from '../components/MealsList';
 import { MEALS } from '../data/dummy-data';
+import { useSelector } from 'react-redux';
 
 function Favorites() {
 
-    const { ids } = useContext(FavoritesContext);
+    const favoriteMealIds = useSelector((state) => state.favoriteMeals.ids);
 
-    if (ids.length === 0) {
+    if (favoriteMealIds.length === 0) {
         return (
             <View style={styles.container}>
                 <Text style={styles.text}>No favorites found.</Text>
@@ -17,7 +16,7 @@ function Favorites() {
     }
     else {
         const favoriteMeals = MEALS.filter((mealItem) => {
-            return ids.includes(mealItem.id);
+            return favoriteMealIds.includes(mealItem.id);
         });
         return (
             <MealsList items={favoriteMeals} />
