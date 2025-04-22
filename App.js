@@ -1,31 +1,40 @@
-import { StyleSheet, SafeAreaView, StatusBar, Pressable } from 'react-native';
-import Categories from './screens/Categories';
+import { StyleSheet, Text, View, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Meals from './screens/Meals';
-import MealDetails from './screens/MealDetails';
-import { Ionicons } from '@expo/vector-icons';
-const Stack = createNativeStackNavigator();
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import WelcomeScreen from './screens/WelcomeScreen';
+import UserScreen from './screens/UserScreen';
+import Ionicons from '@expo/vector-icons/Ionicons';
+const Drawer = createDrawerNavigator();
 
 export default function App() {
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar style="light" />
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{
+        <Drawer.Navigator screenOptions={{
           headerStyle: { backgroundColor: '#2E0000FF' },
           headerTintColor: 'white',
           headerTitleStyle: { fontWeight: 'bold' },
-          contentStyle: { backgroundColor: '#702222FF' }
+          contentStyle: { backgroundColor: '#702222FF' },
+          drawerStyle: { backgroundColor: '#702222FF' },
+          drawerActiveBackgroundColor: '#CF9191FF',
+          drawerActiveTintColor: 'white',
+          drawerInactiveTintColor: 'white',
+          drawerLabelStyle: { fontWeight: 'bold' },
         }}>
-          <Stack.Screen name="Categories" component={Categories} options={{
-            title: 'All Categories',
+          <Drawer.Screen name="Welcome" component={WelcomeScreen} options={{
+            drawerIcon: ({ color, size }) => (
+              <Ionicons name="home" color={color} size={size} />
+            ),
           }} />
-          <Stack.Screen name="Meals" component={Meals} />
-          <Stack.Screen name="MealDetails" component={MealDetails} />
-        </Stack.Navigator>
+          <Drawer.Screen name="User" component={UserScreen} options={{
+            drawerIcon: ({ color, size }) => (
+              <Ionicons name="person" color={color} size={size} />
+            ),
+          }} />
+        </Drawer.Navigator>
       </NavigationContainer>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -33,5 +42,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#2E0000FF',
+  },
+  text: {
+    color: 'white',
   },
 });
