@@ -2,17 +2,22 @@ import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import { MEALS } from '../data/dummy-data';
 import MealDetailsComponent from '../components/MealDetailsComponent';
 import List from '../components/List';
-import { useState, useLayoutEffect } from 'react';
+import { useState, useLayoutEffect, useContext } from 'react';
 import IconButton from '../components/IconButton';
+import { FavoritesContext } from '../store/context/favorites-context';
 
 function MealDetails({ route, navigation }) {
+    const { ids, addFavorite, removeFavorite } = useContext(FavoritesContext);
     const { mealId } = route.params;
+    const mealIsFavorite = ids.includes(mealId);
     const meal = MEALS.find((meal) => meal.id === mealId);
-    const [mealIsFavorite, setMealIsFavorite] = useState(false);
 
     function changeFavoriteStatusHandler() {
-        setMealIsFavorite((currentState) => !currentState);
-        mealIsFavorite ? alert('Remove from favorites') : alert('Add to favorites');
+        if (mealIsFavorite) {
+            removeFavorite(mealId);
+        } else {
+            addFavorite(mealId);
+        }
     }
 
     useLayoutEffect(() => {
