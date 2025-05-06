@@ -6,8 +6,14 @@ import Button from '../UI/Button';
 import { ExpensesContext } from '../store/expenses-context';
 import { useContext } from 'react';
 import ExpenseForm from '../components/ManageExpense/ExpenseForm';
+import { storeExpense, updateExpense, deleteExpense } from '../utils/http';
+import LoadingOverlay from '../UI/LoadingOverlay';
+import { useState } from 'react';
+import ErrorOverlay from '../UI/ErrorOverlay';
 
 function ManageExpenses({ route, navigation }) {
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState();
     const expenseId = route.params?.expenseId;
     const isEditing = !!expenseId;
     const expensesCtx = useContext(ExpensesContext);
@@ -19,8 +25,15 @@ function ManageExpenses({ route, navigation }) {
         });
     }, [navigation, isEditing]);
 
-    function deleteExpense() {
-        expensesCtx.deleteExpense(expenseId);
+    async function deleteExpenseHandler() {
+        setIsLoading(true);
+        try {
+            expensesCtx.deleteExpense(expenseId);
+            await deleteExpense(expenseId);
+        } catch (error) {
+            setError('Deleting expense failed.');
+        }
+        setIsLoading(false);
         navigation.goBack();
     }
 
@@ -28,18 +41,42 @@ function ManageExpenses({ route, navigation }) {
         navigation.goBack();
     }
 
-    function confirmHandler(expenseData) {
+    async function confirmHandler(expenseData) {
+        setIsLoading(true);
         if (isEditing) {
             expensesCtx.updateExpense(expenseId, expenseData);
+            try {
+                await updateExpense(expenseId, expenseData);
+            } catch (error) {
+                setError('Updating expense failed.');
+            }
         } else {
-            expensesCtx.addExpense(expenseData);
+            try {
+                const id = await storeExpense(expenseData);
+                expensesCtx.addExpense({ ...expenseData, id: id });
+            } catch (error) {
+                setError('Storing expense failed.');
+            }
         }
+        setIsLoading(false);
         navigation.goBack();
+    }
+
+    function errorHandler() {
+        setError(null);
+    }
+
+    if (error) {
+        return <ErrorOverlay message={error} onConfirm={errorHandler} />;
+    }
+
+    if (isLoading) {
+        return <LoadingOverlay />;
     }
 
     return (
         <View style={styles.container}>
-            <ExpenseForm onCancel={cancelHandler} onSubmit={confirmHandler} onDelete={deleteExpense} isEditing={isEditing} defaultValues={selectedExpense} />
+            <ExpenseForm onCancel={cancelHandler} onSubmit={confirmHandler} onDelete={deleteExpenseHandler} isEditing={isEditing} defaultValues={selectedExpense} />
         </View>
     );
 }
